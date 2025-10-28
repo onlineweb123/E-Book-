@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="ta">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>eBook Website</title>
+  <meta name="theme-color" content="#121212">
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" href="icon-192.png">
+
+  <style>
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0; font-family: 'Segoe UI', sans-serif;
+      height: 100vh; background: #f4f4f8; color: #222;
+      transition: background 0.3s, color 0.3s;
+    }
+    body.dark { background: #121212; color: #f0f0f0; }
+
+    /* Sidebar */
+    .sidebar {
+      position: fixed; left: -250px; top: 0; width: 250px; height: 100%;
+      background: #222; color: #fff; padding: 20px; box-sizing: border-box;
+      transition: left 0.3s ease; z-index: 100; overflow-y: auto;
+    }
+    .sidebar.active { left: 0; }
+    .sidebar h2 { text-align: center; margin-bottom: 20px; }
+    .menu-item {
+      padding: 12px; cursor: pointer; border-radius: 8px;
+      transition: background 0.2s;
+    }
+    .menu-item:hover { background: #444; }
+
+    /* Buttons */
+    .menu-btn, .theme-btn {
+      position: fixed; top: 15px; background: #222; color: #fff;
+      border: none; padding: 10px 15px; font-size: 18px;
+      border-radius: 8px; cursor: pointer; z-index: 200;
+      transition: background 0.3s;
+    }
+    .menu-btn:hover, .theme-btn:hover { background: #333; }
+    .menu-btn { left: 15px; }
+    .theme-btn { right: 15px; }
+
+    /* Content */
+    .content {
+      margin-left: 0; padding: 60px 40px;
+      transition: margin-left 0.3s ease, background 0.3s, color 0.3s;
+      min-height: 100vh; background: #fff;
+      box-shadow: inset 0 0 10px rgba(0,0,0,0.1);
+      line-height: 1.6;
+    }
+    body.dark .content {
+      background: #1e1e1e; color: #f0f0f0;
+      box-shadow: inset 0 0 10px rgba(255,255,255,0.05);
+    }
+    .sidebar.active ~ .content { margin-left: 250px; }
+    h1 { border-bottom: 2px solid #ddd; padding-bottom: 10px; }
+    body.dark h1 { border-color: #444; }
+  </style>
+</head>
+<body>
+
+  <button class="menu-btn" onclick="toggleSidebar()">📚 Menu</button>
+  <button class="theme-btn" onclick="toggleTheme()">🌙</button>
+
+  <div class="sidebar" id="sidebar">
+    <h2>📖 eBook Menu</h2>
+    <div class="menu-item" onclick="loadPage('intro')">அறிமுகம்</div>
+    <div class="menu-item" onclick="loadPage('chapter1')">அத்தியாயம் 1</div>
+    <div class="menu-item" onclick="loadPage('chapter2')">அத்தியாயம் 2</div>
+    <div class="menu-item" onclick="loadPage('chapter3')">அத்தியாயம் 3</div>
+    <div class="menu-item" onclick="loadPage('chapter4')">அத்தியாயம் 4</div>
+    <div class="menu-item" onclick="loadPage('chapter5')">அத்தியாயம் 5</div>
+    <div class="menu-item" onclick="loadPage('about')">எழுதியவர் பற்றி</div>
+  </div>
+
+  <div class="content" id="content">
+    <h1>வணக்கம் மாது 👋</h1>
+    <p>இது உன் eBook மாதிரி Website. "📚 Menu" பொத்தானை அழுத்து — Chapters திறக்கும்!</p>
+  </div>
+
+  <script>
+    const sidebar = document.getElementById('sidebar');
+    const body = document.body;
+    const themeBtn = document.querySelector('.theme-btn');
+
+    // Sidebar toggle
+    function toggleSidebar() {
+      sidebar.classList.toggle('active');
+    }
+
+    // Outside click close
+    document.addEventListener('click', e => {
+      if (!sidebar.contains(e.target) && !e.target.classList.contains('menu-btn')) {
+        sidebar.classList.remove('active');
+      }
+    });
+
+    // Pages
+    const pages = {
+      intro: `<h1>அறிமுகம்</h1><p>இங்கே அறிமுகம் content எழுதலாம்...</p>`,
+      chapter1: `<h1>அத்தியாயம் 1</h1><p>இங்கே அத்தியாயம் 1 content எழுதலாம்...</p>`,
+      chapter2: `<h1>அத்தியாயம் 2</h1><p>இங்கே அத்தியாயம் 2 content எழுதலாம்...</p>`,
+      chapter3: `<h1>அத்தியாயம் 3</h1><p>இங்கே அத்தியாயம் 3 content எழுதலாம்...</p>`,
+      chapter4: `<h1>அத்தியாயம் 4</h1><p>இங்கே அத்தியாயம் 4 content எழுதலாம்...</p>`,
+      chapter5: `<h1>அத்தியாயம் 5</h1><p>இங்கே அத்தியாயம் 5 content எழுதலாம்...</p>`,
+      about: `<h1>எழுதியவர் பற்றி</h1><p>இங்கே எழுதியவர் பற்றிய content எழுதலாம்...</p>`
+    };
+
+    function loadPage(page) {
+      document.getElementById('content').innerHTML = pages[page] || "<h1>பக்கம் காணவில்லை</h1>";
+      toggleSidebar();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // Theme toggle
+    function toggleTheme() {
+      body.classList.toggle('dark');
+      themeBtn.textContent = body.classList.contains('dark') ? '☀️' : '🌙';
+      localStorage.setItem('theme', body.classList.contains('dark') ? 'dark' : 'light');
+    }
+    if (localStorage.getItem('theme') === 'dark') {
+      body.classList.add('dark');
+      themeBtn.textContent = '☀️';
+    }
+
+    // ✅ Register service worker
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('sw.js')
+        .then(() => console.log('✅ Service Worker Registered'))
+        .catch(err => console.log('❌ Service Worker failed:', err));
+    }
+  </script>
+</body>
+</html>
